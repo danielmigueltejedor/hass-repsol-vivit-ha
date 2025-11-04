@@ -3,7 +3,7 @@
 # 🟠 repsol vivit + Home Assistant (Daniel Fork)
 
 ![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Custom%20Integration-41BDF5?style=for-the-badge&logo=homeassistant)
-![Version](https://img.shields.io/badge/Version-1.4.1-orange?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-1.4.3-orange?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
 Integración **mejorada y actualizada** para **Repsol Luz y Gas** en Home Assistant.  
