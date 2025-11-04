@@ -106,3 +106,4 @@ Basado en el proyecto original ad-ha/repsolluzygas-async￼
 Modificado, optimizado y mantenido por Daniel Miguel Tejedor (Nodalia)
 Distribuido bajo licencia MIT
 
+![icon](https://github.com/danielmigueltejedor/hass-repsolluzygas-daniel/raw/main/icon.png)
