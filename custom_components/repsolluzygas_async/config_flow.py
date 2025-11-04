@@ -1,8 +1,10 @@
-"""Config flow for Repsol Luz y Gas."""
+"""Config flow for Repsol Vivit + Home Assistant (repsolluzygas_async)."""
 from __future__ import annotations
 
-import voluptuous as vol
 from typing import Any
+import asyncio
+import voluptuous as vol
+from aiohttp.client_exceptions import ClientConnectorError, ClientResponseError
 
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
@@ -19,6 +21,9 @@ from .const import (
     LOGIN_DATA,
 )
 
+TIMEOUT_S = 15
+
+
 class RepsolConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
@@ -27,9 +32,9 @@ class RepsolConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._contracts: list[dict[str, Any]] | None = None
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None):
-        errors = {}
+        errors: dict[str, str] = {}
+
         if user_input is not None:
-            # 1) Login
             session = async_get_clientsession(self.hass)
             cookies = COOKIES_CONST.copy()
             data = LOGIN_DATA.copy()
@@ -39,64 +44,91 @@ class RepsolConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             headers = LOGIN_HEADERS.copy()
 
             try:
-                async with session.post(
-                    LOGIN_URL, headers=headers, cookies=cookies, data=data
-                ) as resp:
-                    text = await resp.text()
-                    if resp.status != 200:
-                        LOGGER.error("Login failed in flow. HTTP %s Body=%s", resp.status, text[:500])
-                        errors["base"] = "invalid_auth"
-                    else:
-                        payload = await resp.json(content_type=None)
-                        ui = payload.get("userInfo") or {}
-                        uid = ui.get("UID")
-                        sig = ui.get("UIDSignature")
-                        ts = ui.get("signatureTimestamp")
-                        if not (uid and sig and ts):
-                            LOGGER.error("Login tokens missing in flow. userInfo=%s", ui)
-                            errors["base"] = "invalid_auth"
+                # ---- LOGIN ---------------------------------------------------
+                async with asyncio.timeout(TIMEOUT_S):
+                    async with session.post(
+                        LOGIN_URL, headers=headers, cookies=cookies, data=data
+                    ) as resp:
+                        if resp.status != 200:
+                            # Solo leemos el body para log en caso de error
+                            err_txt = (await resp.text())[:500]
+                            LOGGER.error(
+                                "Login failed in flow. HTTP %s Body=%s",
+                                resp.status,
+                                err_txt,
+                            )
+                            errors["base"] = (
+                                "invalid_auth" if resp.status in (401, 403) else "cannot_connect"
+                            )
                         else:
-                            # 2) Get contracts
-                            headers2 = CONTRACTS_HEADERS.copy()
-                            headers2.update({"UID": uid, "signature": sig, "signatureTimestamp": ts})
-
-                            async with session.get(CONTRACTS_URL, headers=headers2, cookies=cookies) as r2:
-                                if r2.status != 200:
-                                    LOGGER.error("Contracts fetch failed in flow. HTTP %s", r2.status)
-                                    errors["base"] = "cannot_connect"
-                                else:
-                                    data2 = await r2.json()
-                                    contracts: list[dict] = []
-                                    for house in data2 or []:
-                                        hid = house.get("code")
-                                        for c in house.get("contracts", []):
-                                            contracts.append(
-                                                {
-                                                    "code": c.get("code"),
-                                                    "cups": c.get("cups"),
-                                                    "type": c.get("contractType"),
-                                                    "house_id": hid,
-                                                }
+                            payload = await resp.json(content_type=None)
+                            ui = payload.get("userInfo") or {}
+                            uid = ui.get("UID")
+                            sig = ui.get("UIDSignature")
+                            ts = ui.get("signatureTimestamp")
+                            if not (uid and sig and ts):
+                                LOGGER.error("Login tokens missing in flow. userInfo=%s", ui)
+                                errors["base"] = "invalid_auth"
+                            else:
+                                # ---- LIST CONTRACTS --------------------------------
+                                headers2 = CONTRACTS_HEADERS.copy()
+                                headers2.update(
+                                    {
+                                        "UID": uid,
+                                        "signature": sig,
+                                        "signatureTimestamp": ts,
+                                    }
+                                )
+                                async with asyncio.timeout(TIMEOUT_S):
+                                    async with session.get(
+                                        CONTRACTS_URL, headers=headers2, cookies=cookies
+                                    ) as r2:
+                                        if r2.status != 200:
+                                            LOGGER.error(
+                                                "Contracts fetch failed in flow. HTTP %s",
+                                                r2.status,
                                             )
-                                    if not contracts:
-                                        errors["base"] = "no_contracts"
-                                    else:
-                                        self._creds = {
-                                            "username": user_input["username"],
-                                            "password": user_input["password"],
-                                        }
-                                        self._contracts = contracts
-                                        return await self.async_step_contract()
+                                            errors["base"] = "cannot_connect"
+                                        else:
+                                            data2 = await r2.json(content_type=None)
+                                            contracts: list[dict[str, Any]] = []
+                                            for house in data2 or []:
+                                                hid = (house or {}).get("code")
+                                                for c in (house or {}).get("contracts", []):
+                                                    contracts.append(
+                                                        {
+                                                            "code": c.get("code"),
+                                                            "cups": c.get("cups"),
+                                                            "type": c.get("contractType"),
+                                                            "house_id": hid,
+                                                        }
+                                                    )
 
-            except Exception as e:
-                LOGGER.error("Flow error: %s", e)
+                                            if not contracts:
+                                                errors["base"] = "no_contracts"
+                                            else:
+                                                self._creds = {
+                                                    "username": user_input["username"],
+                                                    "password": user_input["password"],
+                                                }
+                                                self._contracts = contracts
+                                                return await self.async_step_contract()
+
+            except (ClientConnectorError, asyncio.TimeoutError):
                 errors["base"] = "cannot_connect"
+            except ClientResponseError as e:
+                errors["base"] = (
+                    "invalid_auth" if e.status in (401, 403) else "cannot_connect"
+                )
+            except Exception as e:  # noqa: BLE001
+                LOGGER.exception("Unexpected error during flow: %s", e)
+                errors["base"] = "unknown"
 
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Required("username"): str,
+                    vol.Required("username", default=(user_input or {}).get("username", "")): str,
                     vol.Required("password"): str,
                 }
             ),
@@ -105,21 +137,26 @@ class RepsolConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_contract(self, user_input: dict[str, Any] | None = None):
         assert self._contracts is not None
-        # Mapa code -> "TYPE - CUPS"
-        opts = {c["code"]: f'{(c.get("type") or "").upper()} - {c.get("cups") or ""}' for c in self._contracts}
 
-        errors = {}
+        # Mapa code -> "TYPE - CUPS"
+        opts = {
+            c["code"]: f'{(c.get("type") or "").upper()} - {c.get("cups") or ""}'
+            for c in self._contracts
+        }
+
+        errors: dict[str, str] = {}
+
         if user_input is not None:
             code = user_input["contract_code"]
             selected = next(c for c in self._contracts if c["code"] == code)
             title = f'{(selected.get("type") or "ELECTRICITY").upper()} - {selected.get("cups") or code}'
 
             data = {
-                **self._creds,
+                **(self._creds or {}),
                 "contract_id": selected["code"],
             }
 
-            # Unique por contrato para permitir varias entradas (una por contrato)
+            # Unique por contrato (por si el usuario quiere varias instancias, una por contrato)
             await self.async_set_unique_id(f"repsol_{selected['code']}")
             self._abort_if_unique_id_configured()
 
