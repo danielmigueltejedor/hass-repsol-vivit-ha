@@ -1,35 +1,42 @@
 {
-  "config": {
-      "step": {
-          "user": {
-              "title": "Login",
-              "data": {
-                  "username": "Username",
-                  "password": "Password"
-              }
-          },
-          "contract": {
-              "title": "Select Contract",
-              "data": {
-                  "contract_index": "Select the contract based on CUPS"
-              }
-          }
-      },
-      "error": {
-          "already_configured": "This contract is already configured. Please select a different contract.",
-          "login_failed": "Failed to log in with the provided credentials. Please check your username and password and try again.",
-          "invalid_contracts_data": "Failed to retrieve contract data. Please check your connection or API settings.",
-          "invalid_contract_selection": "Invalid contract selection. Please try again."
-      },
-      "abort": {
-          "already_configured": "This contract has already been set up and cannot be configured again."
-      }
-  },
-  "options": {
-      "step": {
-          "init": {
-              "title": "Repsol Luz y Gas Integration"
-          }
-      }
-  }
+    "config": {
+        "step": {
+            "user": {
+                "title": "Sign in to Repsol Vivit",
+                "description": "Enter your Repsol Vivit (formerly Repsol Luz y Gas) account credentials to link your account with Home Assistant.",
+                "data": {
+                    "username": "Username",
+                    "password": "Password"
+                }
+            },
+            "contract": {
+                "title": "Select Contract",
+                "description": "Select the contract you want to integrate. Each contract will be configured as a separate entry.",
+                "data": {
+                    "contract_code": "Contract (CUPS)"
+                }
+            }
+        },
+        "error": {
+            "cannot_connect": "Unable to connect to Repsol Vivit servers. Check your internet connection or try again later.",
+            "invalid_auth": "Invalid username or password.",
+            "no_contracts": "No contracts found for this account.",
+            "unknown": "An unexpected error occurred.",
+            "already_configured": "This contract is already configured. Please select another one.",
+            "login_failed": "Failed to log in with the provided credentials. Please check your username and password and try again.",
+            "invalid_contracts_data": "Error retrieving contract data. Please check your connection or the Repsol API.",
+            "invalid_contract_selection": "Invalid contract selection. Please try again."
+        },
+        "abort": {
+            "already_configured": "This contract has already been configured and cannot be added again."
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Repsol Vivit + Home Assistant Integration Options",
+                "description": "Configure additional options for the Repsol Vivit integration."
+            }
+        }
+    }
 }
