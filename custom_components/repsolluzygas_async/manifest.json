@@ -1,0 +1,11 @@
+{
+  "domain": "repsolluzygas_async",
+  "name": "Repsol Luz y Gas (Daniel Fork)",
+  "codeowners": ["@DanielMiguelTejedor"],
+  "version": "1.4.0",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "requirements": [],
+  "documentation": "https://github.com/TU_USUARIO/hass-repsolluzygas-daniel",
+  "issue_tracker": "https://github.com/TU_USUARIO/hass-repsolluzygas-daniel/issues"
+}

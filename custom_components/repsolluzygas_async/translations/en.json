@@ -1,0 +1,35 @@
+{
+  "config": {
+      "step": {
+          "user": {
+              "title": "Login",
+              "data": {
+                  "username": "Username",
+                  "password": "Password"
+              }
+          },
+          "contract": {
+              "title": "Select Contract",
+              "data": {
+                  "contract_index": "Select the contract based on CUPS"
+              }
+          }
+      },
+      "error": {
+          "already_configured": "This contract is already configured. Please select a different contract.",
+          "login_failed": "Failed to log in with the provided credentials. Please check your username and password and try again.",
+          "invalid_contracts_data": "Failed to retrieve contract data. Please check your connection or API settings.",
+          "invalid_contract_selection": "Invalid contract selection. Please try again."
+      },
+      "abort": {
+          "already_configured": "This contract has already been set up and cannot be configured again."
+      }
+  },
+  "options": {
+      "step": {
+          "init": {
+              "title": "Repsol Luz y Gas Integration"
+          }
+      }
+  }
+}
