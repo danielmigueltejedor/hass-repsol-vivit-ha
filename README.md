@@ -1,4 +1,4 @@
-![banner](https://raw.githubusercontent.com/danielmigueltejedor/hass-repsolluzygas-daniel/main/banner.png)
+![banner](https://raw.githubusercontent.com/danielmigueltejedor/hass-repsol-vivit-ha/main/banner.png)
 
 # 🟠 repsol vivit + Home Assistant (Daniel Fork)
 
@@ -21,7 +21,7 @@ Basada en el proyecto original [`ad-ha/repsolluzygas-async`](https://github.com/
 ## 📦 Instalación mediante HACS
 
 1. Abre **HACS → Integraciones → Menú (⋮) → Repositorios personalizados**
-2. Añade el siguiente repositorio: https://github.com/danielmigueltejedor/hass-repsolluzygas-daniel
+2. Añade el siguiente repositorio: https://github.com/danielmigueltejedor/hass-repsol-vivit-ha
 3. Categoría → **Integration**
 4. Pulsa **Añadir**, después busca **Repsol Luz y Gas (Daniel Fork)** y **haz clic en Instalar**.
 5. Reinicia Home Assistant.
@@ -83,7 +83,7 @@ Si quieres probar cambios:
 
 ```bash
 cd /config/custom_components/
-git clone https://github.com/danielmigueltejedor/hass-repsolluzygas-daniel.git
+git clone https://github.com/danielmigueltejedor/hass-repsol-vivit-ha.git
 ha core restart
 ```
 Los logs detallados se pueden activar en tu configuration.yaml:
@@ -106,4 +106,4 @@ Basado en el proyecto original ad-ha/repsolluzygas-async￼
 Modificado, optimizado y mantenido por Daniel Miguel Tejedor (Nodalia)
 Distribuido bajo licencia MIT
 
-![icon](https://github.com/danielmigueltejedor/hass-repsolluzygas-daniel/raw/main/icon.png)
+![icon](https://github.com/danielmigueltejedor/hass-repsol-vivit-ha/raw/main/icon.png)
