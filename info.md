@@ -1,6 +1,6 @@
-![banner](https://raw.githubusercontent.com/danielmigueltejedor/hass-repsolluzygas-daniel/main/banner.png)
+![banner](https://raw.githubusercontent.com/danielmigueltejedor/hass-repsol-vivit-ha/main/banner.png)
 
-# 🟠 Repsol Vivit + Home Assistant (Daniel Fork)
+# 🟠 repsol vivit + Home Assistant
 
 > Integración mejorada y actualizada para **Repsol Luz y Gas** en Home Assistant.  
 > Permite visualizar todos tus contratos de electricidad y gas con datos de consumo, costes y facturación en tiempo real.
@@ -25,7 +25,7 @@
 3. Categoría → **Integration**
 4. Instala la integración y reinicia Home Assistant
 5. Añade una nueva integración:  
-**Repsol Luz y Gas (Daniel Fork)**
+**repsol vivit + Home Assistant**
 6. Introduce tus credenciales del área de cliente Repsol y selecciona el contrato
 
 > 💡 Puedes repetir el proceso para añadir varios contratos (uno por instancia).
@@ -68,4 +68,4 @@ Basado en el proyecto original ad-ha/repsolluzygas-async￼
 Modificado, optimizado y mantenido por Daniel Miguel Tejedor (Nodalia)
 Distribuido bajo licencia MIT
 
-![icon](https://github.com/danielmigueltejedor/hass-repsolluzygas-daniel/raw/main/icon.png)
+![icon](https://github.com/danielmigueltejedor/hass-repsol-vivit-ha/raw/main/icon.png)
