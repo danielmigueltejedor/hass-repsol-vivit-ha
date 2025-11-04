@@ -1,0 +1,7 @@
+{
+  "name": "repsol vivit + Home Assistant",
+  "homeassistant": "2025.05",
+  "hacs": "1.4.0",
+  "render_readme": true,
+  "country": "ES"
+}
