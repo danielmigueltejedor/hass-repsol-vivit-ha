@@ -1,7 +1,5 @@
 ![banner](https://raw.githubusercontent.com/danielmigueltejedor/hass-repsolluzygas-daniel/main/banner.png)
-![icon](https://github.com/danielmigueltejedor/hass-repsolluzygas-daniel/raw/main/icon.png)
 
-# Repsol Vivit + Home Assistant
 # 🟠 Repsol Vivit + Home Assistant (Daniel Fork)
 
 > Integración mejorada y actualizada para **Repsol Luz y Gas** en Home Assistant.  
@@ -69,3 +67,5 @@ Desarrollador de Nodalia Smart Systems￼
 Basado en el proyecto original ad-ha/repsolluzygas-async￼
 Modificado, optimizado y mantenido por Daniel Miguel Tejedor (Nodalia)
 Distribuido bajo licencia MIT
+
+![icon](https://github.com/danielmigueltejedor/hass-repsolluzygas-daniel/raw/main/icon.png)
